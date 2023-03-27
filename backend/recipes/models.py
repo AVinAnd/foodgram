@@ -56,7 +56,11 @@ class Favorite(models.Model):
     """Модель избранного"""
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='favorite')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='in_favorite'
+    )
 
     class Meta:
         verbose_name = 'избранное'

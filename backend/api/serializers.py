@@ -61,6 +61,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
 
 class SetPasswordSerializer(serializers.ModelSerializer):
+    """Сериализатор для смены пароля"""
     new_password = serializers.CharField(max_length=150)
     current_password = serializers.CharField(max_length=150)
 
@@ -70,6 +71,7 @@ class SetPasswordSerializer(serializers.ModelSerializer):
 
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор для ингредиентов в рецепте"""
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(source='ingredient.measurement_unit')
 
@@ -79,6 +81,7 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор рецептов"""
     tags = TagSerializer(many=True)
     author = UserSerializer()
     ingredients = serializers.SerializerMethodField()
@@ -92,16 +95,19 @@ class RecipeSerializer(serializers.ModelSerializer):
                   'image', 'text', 'cooking_time')
 
     def get_ingredients(self, recipe):
+        """Получение всех ингредиентов в рецепте"""
         ingredients_in_recipe = recipe.ingredients_in_recipes.all()
         return IngredientInRecipeSerializer(ingredients_in_recipe, many=True).data
 
     def get_is_favorited(self, recipe):
+        """Проверяет находится ли рецепт в избранном"""
         user = self.context.get('request').user
         if Favorite.objects.filter(user=user.id, recipe=recipe.id):
             return True
         return False
 
     def get_is_in_shopping_cart(self, recipe):
+        """Проверяет находится ли рецепт в списке покупок"""
         user = self.context.get('request').user
         if ShoppingCart.objects.filter(user=user.id, recipe=recipe.id):
             return True
@@ -109,6 +115,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class CreateIngredientInRecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор для добавления ингредиентов в рецепт"""
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(min_value=1, write_only=True)
 
@@ -118,6 +125,7 @@ class CreateIngredientInRecipeSerializer(serializers.ModelSerializer):
 
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания рецептов"""
     ingredients = CreateIngredientInRecipeSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
     image = Base64ImageField()
@@ -128,6 +136,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                   'name', 'text', 'cooking_time')
 
     def create(self, validated_data):
+        """Создание рецепта"""
         ingredients_in_recipe = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         author = self.context.get('request').user
@@ -142,6 +151,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
+        """Обновление существующего рецепта"""
         new_ingredients_in_recipe = validated_data.get('ingredients')
         instance.tags.set(validated_data.get('tags'))
         instance.image = validated_data.get('image')
@@ -159,18 +169,20 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return instance
 
     def to_representation(self, instance):
+        """Выбор сериализатора для преобразования данных"""
         serializer = RecipeSerializer(instance, context=self.context)
         return serializer.data
 
 
 class AddRecipeSerializer(serializers.ModelSerializer):
-
+    """Сериализатор для добавления рецепта в избранное или список покупок"""
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class AddUserSerializer(serializers.ModelSerializer):
+    "Сериализатор для подписки на пользователя"
     is_subscribed = serializers.BooleanField(default=True, read_only=True)
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
@@ -181,8 +193,10 @@ class AddUserSerializer(serializers.ModelSerializer):
                   'is_subscribed', 'recipes', 'recipes_count')
 
     def get_recipes(self, user):
+        """Получает все рецепты пользователя"""
         recipes = user.recipes.all()
         return AddRecipeSerializer(recipes, many=True).data
 
     def get_recipes_count(self, user):
+        """Выводит количество рецептов, добавленных пользователем"""
         return len(user.recipes.all())
