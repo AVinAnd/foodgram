@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from rest_framework import viewsets, mixins, status, pagination, exceptions
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, mixins, status, pagination, exceptions, filters
 from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
@@ -8,6 +9,7 @@ from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
 
 from core.models import Tag, Ingredient
 from core.permissions import (UserPermission, RecipePermission)
+from core.filters import RecipeFilter
 from recipes.models import Recipe, IngredientInRecipe, Favorite, ShoppingCart
 from users.models import User, Subscribe
 from .mixins import (ListRetrieveCreateViewSet, )
@@ -28,6 +30,8 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """Вьюсет для ингредиентов, разрешает только безопасные запросы"""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('^name',)
 
 
 class UserViewSet(ListRetrieveCreateViewSet):
@@ -130,6 +134,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     """Вьюсет для рецептов, разрешает все виды запросов"""
     queryset = Recipe.objects.all()
     permission_classes = (RecipePermission,)
+    filter_backends = (DjangoFilterBackend,)
+   # filterset_fields = ('author', 'tags', )
+    #filterset_fields = ('is_favorited', 'is_in_shopping_cart', 'author', 'tags')
+    filterset_class = RecipeFilter
     http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_serializer_class(self):
