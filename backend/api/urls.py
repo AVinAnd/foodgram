@@ -1,12 +1,7 @@
-from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from djoser.views import TokenCreateView, TokenDestroyView
-from rest_framework.viewsets import ViewSet
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
 
-from users.models import User
 from .views import (TagViewSet, IngredientViewSet, UserViewSet, RecipeViewSet)
 
 app_name = 'api'
@@ -16,7 +11,6 @@ users_router_v1.register(r'', UserViewSet)
 
 recipes_router_v1 = DefaultRouter()
 recipes_router_v1.register(r'', RecipeViewSet)
-#api_router_v1.register(r'recipes/download_shopping_cart', ShoppingCartViewSet)
 
 ingredients_router_v1 = DefaultRouter()
 ingredients_router_v1.register(r'', IngredientViewSet)

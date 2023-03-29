@@ -1,18 +1,16 @@
-from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, mixins, status, pagination, exceptions, filters
-from rest_framework.decorators import action, permission_classes
+from rest_framework import viewsets, status, exceptions, filters
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
-                                        IsAuthenticated)
+from rest_framework.permissions import IsAuthenticated
 
 from core.models import Tag, Ingredient
-from core.permissions import (UserPermission, RecipePermission)
+from core.permissions import UserPermission, RecipePermission
 from core.filters import RecipeFilter
 from recipes.models import Recipe, IngredientInRecipe, Favorite, ShoppingCart
 from users.models import User, Subscribe
-from .mixins import (ListRetrieveCreateViewSet, )
+from .mixins import ListRetrieveCreateViewSet
 from .serializers import (TagSerializer, IngredientSerializer, UserSerializer,
                           CreateUserSerializer, SetPasswordSerializer,
                           RecipeSerializer, CreateRecipeSerializer,
@@ -49,7 +47,7 @@ class UserViewSet(ListRetrieveCreateViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         username = serializer.validated_data.get('username')
         user = self.queryset.get(username=username)
@@ -71,7 +69,7 @@ class UserViewSet(ListRetrieveCreateViewSet):
         """Меняет пароль пользователя"""
         user = request.user
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
         if not user.check_password(
                 serializer.validated_data.get('current_password')):
             raise exceptions.ValidationError('Введен не верный пароль')
@@ -135,8 +133,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (RecipePermission,)
     filter_backends = (DjangoFilterBackend,)
-   # filterset_fields = ('author', 'tags', )
-    #filterset_fields = ('is_favorited', 'is_in_shopping_cart', 'author', 'tags')
     filterset_class = RecipeFilter
     http_method_names = ['get', 'post', 'patch', 'delete']
 
@@ -178,7 +174,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, pk):
         """Добавляет рецепт в список покупок или убирает из него"""
         recipe = self.queryset.get(id=pk)
-        shopping_cart = ShoppingCart.objects.filter(user=request.user, recipe=recipe)
+        shopping_cart = ShoppingCart.objects.filter(
+            user=request.user,
+            recipe=recipe
+        )
         if request.method == 'DELETE':
             if not shopping_cart:
                 return Response('В списке покупок данного рецепта нет',
@@ -223,7 +222,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
              for ingredient_in_recipe in ingredients_in_recipe]
 
         filename = 'test.txt'
-        data = [f'{item} - {ingredients_list[item]}\n' for item in ingredients_list]
+        data = [f'{item} - {ingredients_list[item]}\n'
+                for item in ingredients_list]
         response = HttpResponse(data, content_type='text/plain; charset=UTF-8')
-        response['Content-Disposition'] = ('attachment; filename={0}'.format(filename))
+        response['Content-Disposition'] = (
+            'attachment; filename={0}'.format(filename))
         return response

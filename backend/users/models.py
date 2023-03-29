@@ -5,15 +5,20 @@ from django.core.validators import RegexValidator
 
 class User(AbstractUser):
     """Модель пользователей"""
-    email = models.EmailField(unique=True, max_length=254)
+    email = models.EmailField(
+        unique=True,
+        max_length=254,
+        verbose_name='электронная почта'
+    )
     username = models.CharField(
         max_length=150,
         unique=True,
-        validators=[RegexValidator(regex='^[\w.@+-]+$')]
+        validators=[RegexValidator(regex='^[\w.@+-]+$')],
+        verbose_name='имя пользователя'
     )
-    password = models.CharField(max_length=150)
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
+    password = models.CharField(max_length=150, verbose_name='пароль')
+    first_name = models.CharField(max_length=150, verbose_name='имя')
+    last_name = models.CharField(max_length=150, verbose_name='фамилия')
 
     class Meta:
         verbose_name = 'пользователь'
@@ -26,9 +31,17 @@ class User(AbstractUser):
 class Subscribe(models.Model):
     """Модель подписок"""
     subscriber = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='subscribers')
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscribers',
+        verbose_name='подписчик'
+    )
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='authors')
+        User,
+        on_delete=models.CASCADE,
+        related_name='authors',
+        verbose_name='автор'
+    )
 
     class Meta:
         verbose_name = 'подписка'

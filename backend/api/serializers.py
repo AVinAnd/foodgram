@@ -1,7 +1,6 @@
 import base64
 
-from rest_framework import serializers, exceptions, status
-from django.core import serializers as django_serializer
+from rest_framework import serializers
 from django.core.files.base import ContentFile
 
 from core.models import Tag, Ingredient
@@ -73,7 +72,8 @@ class SetPasswordSerializer(serializers.ModelSerializer):
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
     """Сериализатор для ингредиентов в рецепте"""
     name = serializers.ReadOnlyField(source='ingredient.name')
-    measurement_unit = serializers.ReadOnlyField(source='ingredient.measurement_unit')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit')
 
     class Meta:
         model = IngredientInRecipe
@@ -96,8 +96,8 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, recipe):
         """Получение всех ингредиентов в рецепте"""
-        ingredients_in_recipe = recipe.ingredients_in_recipes.all()
-        return IngredientInRecipeSerializer(ingredients_in_recipe, many=True).data
+        ingredients = recipe.ingredients_in_recipes.all()
+        return IngredientInRecipeSerializer(ingredients, many=True).data
 
     def get_is_favorited(self, recipe):
         """Проверяет находится ли рецепт в избранном"""
@@ -127,7 +127,10 @@ class CreateIngredientInRecipeSerializer(serializers.ModelSerializer):
 class CreateRecipeSerializer(serializers.ModelSerializer):
     """Сериализатор для создания рецептов"""
     ingredients = CreateIngredientInRecipeSerializer(many=True)
-    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(),
+        many=True
+    )
     image = Base64ImageField()
 
     class Meta:

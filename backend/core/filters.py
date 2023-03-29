@@ -1,9 +1,11 @@
 from django_filters import rest_framework as filters
+
 from recipes.models import Recipe
 from core.models import Tag
 
 
 class RecipeFilter(filters.FilterSet):
+    """Фильтры для рецептов"""
     is_favorited = filters.BooleanFilter(
         label='is_favorited', method='filter_is_favorited')
     is_in_shopping_cart = filters.BooleanFilter(
@@ -19,6 +21,8 @@ class RecipeFilter(filters.FilterSet):
         fields = ('author', 'tags', 'is_favorited', 'is_in_shopping_cart')
 
     def filter_is_favorited(self, queryset, _, value):
+        """Выводит список рецептов которые находятся или отсутствуют
+        в списке избранного у пользователя"""
         recipes_in_favorite = self.request.user.favorite.all()
         recipes_id = [recipe.recipe.id for recipe in recipes_in_favorite]
         if value:
@@ -27,6 +31,8 @@ class RecipeFilter(filters.FilterSet):
         return queryset.exclude(id__in=recipes_id)
 
     def filter_is_in_shopping_cart(self, queryset, _, value):
+        """Выводит список рецептов которые находятся или отсутствуют
+        в списке покупок у пользователя"""
         recipes_in_shopping_cart = self.request.user.shopping_cart.all()
         recipes_id = [recipe.recipe.id for recipe in recipes_in_shopping_cart]
         if value:

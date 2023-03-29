@@ -5,13 +5,19 @@ from colorfield.fields import ColorField
 
 class Tag(models.Model):
     """Модель тегов"""
-    name = models.CharField(max_length=200)
-    color = ColorField(default='#FFFFFF', null=True, max_length=7)
+    name = models.CharField(max_length=200, verbose_name='название')
+    color = ColorField(
+        default='#FFFFFF',
+        null=True,
+        max_length=7,
+        verbose_name='цвет'
+    )
     slug = models.CharField(
         max_length=200,
         unique=True,
         null=True,
-        validators=[RegexValidator(regex='^[-а-я-a-zA-Z0-9_]+$')]
+        validators=[RegexValidator(regex='^[-а-я-a-zA-Z0-9_]+$')],
+        verbose_name='слаг'
     )
 
     class Meta:
@@ -24,8 +30,11 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     """Модель ингредиентов"""
-    name = models.CharField(max_length=200)
-    measurement_unit = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, verbose_name='название')
+    measurement_unit = models.CharField(
+        max_length=200,
+        verbose_name='единица измерения'
+    )
 
     class Meta:
         verbose_name = 'ингредиент'
