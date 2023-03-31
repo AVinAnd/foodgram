@@ -2,9 +2,6 @@ version: '3.8'
 services:
   frontend:
     image: vinand/frontend
-  #  build:
-   #   context: ../frontend
-    #  dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
 
@@ -17,9 +14,6 @@ services:
 
   backend:
     image: vinand/foodgram
-  #  build:
-   #   context: ../backend
-    #  dockerfile: Dockerfile
     restart: always
     volumes:
       - ../data:/app/data
