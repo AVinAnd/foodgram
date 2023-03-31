@@ -15,9 +15,10 @@ services:
       - ./.env
 
   backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
+    image: vinand/foodgram
+#    build:
+ #     context: ../backend
+  #    dockerfile: Dockerfile
     restart: always
     volumes:
       - ../data:/app/data
