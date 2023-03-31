@@ -17,9 +17,9 @@ services:
 
   backend:
     image: vinand/foodgram
-#    build:
+  #  build:
    #   context: ../backend
-   #   dockerfile: Dockerfile
+    #  dockerfile: Dockerfile
     restart: always
     volumes:
       - ../data:/app/data
