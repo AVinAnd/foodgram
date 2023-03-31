@@ -10,7 +10,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.11
+          python-version: 3.9
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip 
@@ -57,7 +57,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker-compose stop
-            sudo docker-compose rm web
+            sudo docker-compose rm backend
             cd foodgram-project-react/infra/
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
