@@ -1,16 +1,17 @@
-from django_filters import rest_framework as filters
+from django_filters import rest_framework as rf_filters
+from rest_framework import filters
 
 from recipes.models import Recipe
 from core.models import Tag
 
 
-class RecipeFilter(filters.FilterSet):
+class RecipeFilter(rf_filters.FilterSet):
     """Фильтры для рецептов"""
-    is_favorited = filters.BooleanFilter(
+    is_favorited = rf_filters.BooleanFilter(
         label='is_favorited', method='filter_is_favorited')
-    is_in_shopping_cart = filters.BooleanFilter(
+    is_in_shopping_cart = rf_filters.BooleanFilter(
         label='is_in_shopping_cart', method='filter_is_in_shopping_cart')
-    tags = filters.ModelMultipleChoiceFilter(
+    tags = rf_filters.ModelMultipleChoiceFilter(
         queryset=Tag.objects.all(),
         field_name='tags__slug',
         to_field_name='slug'
@@ -39,3 +40,7 @@ class RecipeFilter(filters.FilterSet):
             return queryset.filter(id__in=recipes_id)
 
         return queryset.exclude(id__in=recipes_id)
+
+
+class IngredientFilter(filters.SearchFilter):
+    search_param = 'name'

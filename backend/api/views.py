@@ -1,13 +1,13 @@
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status, exceptions, filters
+from rest_framework import viewsets, status, exceptions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Tag, Ingredient
 from core.permissions import UserPermission, RecipePermission
-from core.filters import RecipeFilter
+from core.filters import RecipeFilter, IngredientFilter
 from recipes.models import Recipe, IngredientInRecipe, Favorite, ShoppingCart
 from users.models import User, Subscribe
 from .mixins import ListRetrieveCreateViewSet
@@ -29,7 +29,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (IngredientFilter,)
     search_fields = ('^name',)
 
 
