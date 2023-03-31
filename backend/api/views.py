@@ -28,6 +28,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """Вьюсет для ингредиентов, разрешает только безопасные запросы"""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    pagination_class = None
     filter_backends = (filters.SearchFilter,)
     search_fields = ('^name',)
 
