@@ -2,7 +2,7 @@ version: '3.8'
 services:
   frontend:
     build:
-      context: ../frontend
+      context: foodgram-project-react/frontend/
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
