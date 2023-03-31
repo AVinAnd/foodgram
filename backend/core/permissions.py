@@ -14,7 +14,7 @@ class UserPermission(permissions.BasePermission):
 class RecipePermission(permissions.BasePermission):
     """Разрешает создание рецептов только авторизованным пользователям,
     просмотр рецептов доступен для всех,
-    обновление и удаление доступно автору рецепта"""
+    обновление и удаление доступно автору рецепта или администратору"""
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
@@ -24,4 +24,5 @@ class RecipePermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return (request.method in permissions.SAFE_METHODS
                 or request.user == obj.author
-                or request.user.is_staff)
+                or request.user.is_staff
+                or request.user.is_superuser)

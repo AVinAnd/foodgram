@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status, exceptions
+from rest_framework import viewsets, status, exceptions, pagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -133,6 +133,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     """Вьюсет для рецептов, разрешает все виды запросов"""
     queryset = Recipe.objects.all()
     permission_classes = (RecipePermission,)
+    pagination_class = pagination.PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     http_method_names = ['get', 'post', 'patch', 'delete']
