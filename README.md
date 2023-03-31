@@ -4,5 +4,4 @@ python manage.py loadingredients /d/Dev/foodgram/foodgram-project-react/data/ing
 ```
 sudo docker exec infra_backend_1 python manage.py migrate
 sudo docker exec infra_backend_1 python manage.py collectstatic --no-input
-
 sudo docker exec infra_backend_1 python manage.py loadingredients ./data/ingredients.csv
