@@ -44,9 +44,8 @@ class UserSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, user):
         """Проверяет подписку автора запроса на запрашиваемого пользователя"""
         subscriber = self.context.get('request').user
-        if Subscribe.objects.filter(subscriber=subscriber.id, author=user.id):
-            return True
-        return False
+        return Subscribe.objects.filter(
+            subscriber=subscriber.id, author=user.id).exists()
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -102,16 +101,14 @@ class RecipeSerializer(serializers.ModelSerializer):
     def get_is_favorited(self, recipe):
         """Проверяет находится ли рецепт в избранном"""
         user = self.context.get('request').user
-        if Favorite.objects.filter(user=user.id, recipe=recipe.id):
-            return True
-        return False
+        return Favorite.objects.filter(
+            user=user.id, recipe=recipe.id).exists()
 
     def get_is_in_shopping_cart(self, recipe):
         """Проверяет находится ли рецепт в списке покупок"""
         user = self.context.get('request').user
-        if ShoppingCart.objects.filter(user=user.id, recipe=recipe.id):
-            return True
-        return False
+        return ShoppingCart.objects.filter(
+            user=user.id, recipe=recipe.id).exists()
 
 
 class CreateIngredientInRecipeSerializer(serializers.ModelSerializer):

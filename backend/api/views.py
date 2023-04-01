@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status, exceptions, pagination
+from rest_framework import viewsets, status, exceptions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from core.models import Tag, Ingredient
 from core.permissions import UserPermission, RecipePermission
 from core.filters import RecipeFilter, IngredientFilter
+from core.pagination import FoodgramPagination
 from recipes.models import Recipe, IngredientInRecipe, Favorite, ShoppingCart
 from users.models import User, Subscribe
 from .mixins import ListRetrieveCreateViewSet
@@ -37,6 +38,7 @@ class UserViewSet(ListRetrieveCreateViewSet):
     """Вьюсет для пользователей, разрешает GET и POST запросы"""
     queryset = User.objects.all()
     permission_classes = (UserPermission,)
+    pagination_class = FoodgramPagination
 
     def get_serializer_class(self):
         """Указывает какой сериализатор используется
@@ -133,7 +135,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     """Вьюсет для рецептов, разрешает все виды запросов"""
     queryset = Recipe.objects.all()
     permission_classes = (RecipePermission,)
-    pagination_class = pagination.PageNumberPagination
+    pagination_class = FoodgramPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     http_method_names = ['get', 'post', 'patch', 'delete']
