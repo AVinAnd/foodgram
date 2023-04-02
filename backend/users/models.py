@@ -5,6 +5,7 @@ from django.core.validators import RegexValidator
 
 class User(AbstractUser):
     """Модель пользователей"""
+    USERNAME_FIELD = 'email'
     email = models.EmailField(
         unique=True,
         max_length=254,
