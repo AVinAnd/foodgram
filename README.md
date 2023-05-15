@@ -52,10 +52,5 @@ docker-compose exec infra_backend_1 python manage.py createsuperuser
 docker-compose exec infra_backend_1 python manage.py loaddata ./data/ingredients.csv
 ```
 
-Проект запуститься на сервере по адресу
-Проект доступен по имени http://vinand96foodgram.ddns.net 
-или по адресу http://51.250.17.151
- 
-
-Об авторе
-Андрей Виноградов - студент Яндекс Практикум по курсу Python-разработчик
+### Об авторе
+Андрей Виноградов - python-developer, выпускник Яндекс Практикума по курсу Python-разработчик
